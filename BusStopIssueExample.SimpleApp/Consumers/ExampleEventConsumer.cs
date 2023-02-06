@@ -21,13 +21,14 @@ namespace BusStopIssueExample.SimpleApp.Consumers
             ConcurrentMessageLimit = 1;
         }
 
-        protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<ExampleEventConsumer> consumerConfigurator)
-        {
-            endpointConfigurator.UseMessageRetry(r =>
-            {
-                r.Handle<InvalidOperationException>();
-                r.Interval(100, TimeSpan.FromSeconds(1));
-            });
-        }
+        // Disabled retry policy on endpoint level as suggested
+        //protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<ExampleEventConsumer> consumerConfigurator)
+        //{
+        //    endpointConfigurator.UseMessageRetry(r =>
+        //    {
+        //        r.Handle<InvalidOperationException>();
+        //        r.Interval(100, TimeSpan.FromSeconds(1));
+        //    });
+        //}
     }
 }

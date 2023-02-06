@@ -6,12 +6,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumers(Assembly.GetAssembly(typeof(Program)));
+
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host("localhost", "/", h =>
@@ -21,6 +24,13 @@ builder.Services.AddMassTransit(x =>
         });
 
         cfg.ConfigureEndpoints(context);
+
+        // Moved configuration of retry here as suggested
+        cfg.UseMessageRetry(r =>
+        {
+            r.Handle<InvalidOperationException>();
+            r.Interval(100, TimeSpan.FromSeconds(1));
+        }); 
     });
 });
 
